@@ -1,7 +1,7 @@
 Electron DevTools Installer
 ---------------------------
-[![npm](https://img.shields.io/npm/v/dalonmenezes/electron-devtools-installer?style=for-the-badge&labelColor=1C1E26&color=61ffca)](https://www.npmjs.com/package/@daltonmenezes/electron-devtools-installer)
-![npm](https://img.shields.io/npm/dt/@dalonmenezes/electron-devtools-installer?style=for-the-badge)
+[![npm](https://img.shields.io/npm/v/@daltonmenezes/electron-devtools-installer?style=for-the-badge&labelColor=1C1E26&color=61ffca)](https://www.npmjs.com/package/@daltonmenezes/electron-devtools-installer)
+![npm](https://img.shields.io/npm/dt/@daltonmenezes/electron-devtools-installer?style=for-the-badge)
 [![license](https://img.shields.io/github/license/daltonmenezes/electron-devtools-installer.svg?maxAge=2592000&style=for-the-badge&labelColor=1C1E26&color=61ffca)](https://github.com/daltonmenezes/electron-devtools-installer/blob/main/LICENSE)
 
 This is an easy way to install DevTool extensions into Electron.  You shouldn't
