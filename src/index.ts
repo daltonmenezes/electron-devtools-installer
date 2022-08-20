@@ -1,4 +1,4 @@
-import { BrowserWindow, session } from 'electron';
+import { BrowserWindow, session as electronSession } from 'electron';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as semver from 'semver';
@@ -33,6 +33,10 @@ interface ExtensionOptions {
    */
   forceDownload?: boolean;
   /**
+   * Custom partition session id
+   */
+  sessionId?: string;
+  /**
    * Options passed to session.loadExtension
    */
   loadExtensionOptions?: Record<any, any>;
@@ -51,7 +55,7 @@ const install = (
   if (typeof options === 'boolean') {
     options = { forceDownload: options };
   }
-  const { forceDownload, loadExtensionOptions } = options;
+  const { forceDownload, loadExtensionOptions, sessionId } = options;
 
   if (process.type !== 'browser') {
     return Promise.reject(
@@ -83,14 +87,21 @@ const install = (
       new Error(`Invalid extensionReference passed in: "${extensionReference}"`),
     );
   }
-  const extensionName = IDMap[chromeStoreID];
+  
   let extensionInstalled: boolean;
 
+  const extensionName = IDMap[chromeStoreID]
+  const customSessionKey = sessionId ? sessionId : ''
+
+  const session = customSessionKey
+    ? electronSession.fromPartition(customSessionKey)
+    : electronSession.defaultSession
+
   // For Electron >=9.
-  if ((session.defaultSession as any).getExtension) {
+  if ((session as any).getExtension) {
     extensionInstalled =
       !!extensionName &&
-      (session.defaultSession as any)
+      (session as any)
         .getAllExtensions()
         .find((e: { name: string }) => e.name === extensionName);
   } else {
@@ -107,19 +118,19 @@ const install = (
     // Use forceDownload, but already installed
     if (extensionInstalled) {
       // For Electron >=9.
-      if ((session.defaultSession as any).removeExtension) {
-        const extensionId = (session.defaultSession as any)
+      if ((session as any).removeExtension) {
+        const extensionId = (session as any)
           .getAllExtensions()
           .find((e: { name: string }) => e.name).id;
-        (session.defaultSession as any).removeExtension(extensionId);
+        (session as any).removeExtension(extensionId);
       } else {
         BrowserWindow.removeDevToolsExtension(extensionName);
       }
     }
 
     // For Electron >=9.
-    if ((session.defaultSession as any).loadExtension) {
-      return (session.defaultSession as any)
+    if ((session as any).loadExtension) {
+      return (session as any)
         .loadExtension(extensionFolder, loadExtensionOptions)
         .then((ext: { name: string }) => {
           return Promise.resolve(ext.name);
